@@ -1,50 +1,54 @@
-var colors = ['yellow', 'red', 'green'];
+var basket;
+var paper;
+var allMyPapers;
 
-function setup() {
-   createCanvas(windowWidth,windowHeight);
-   angleMode(DEGREES);
- }
+var manyPapers = [];
+var amountOfManyPapers = 30;
 
-function draw() {
-  //campo da bocce
-  background('#ECE3D3');
-
-  stroke('grey');
-  line(0, height/3, width, height/3);
-  line(0, height/3*2, width, height/3*2);
-
-  stroke('brown');
-  fill('brown');
-  rect(0, 0, 5, height);
-  rect(width-5, 0, width, height);
-
-  //boccino
-  fill('white');
-  noStroke();
-  ellipse(windowWidth/4, windowHeight/6, 20);
-
-  //bocce
-  fill('yellow');
-  ellipse(map(rotationX, -180, 180, 1, windowWidth), map(rotationZ, 0, 360, 1, windowHeight), 50);
-
-  fill('red');
-  ellipse(map(rotationY, -180, 180, 1, windowWidth), map(rotationX, -180, 180, 1, windowHeight), 50);
-
-  fill('green');
-  ellipse(map(rotationZ, 0, 360, 1, windowWidth), map(rotationY, -180, 180, 1, windowHeight), 50);
-
-  for (var i = 0; i < touches.length; i++) {
-    // One color per finger
-    fill(colors[i]);
-    // Draw a circle at each finger
-    ellipse(touches[i].x, touches[i].y, 50);
-  }
+function preload() {
+  basket = loadImage("./assets/basket.png");
+  paper = loadImage("./assets/paper.png");
 }
 
-function touchMoved() {
-return false;
- }
+function setup() {
+  createCanvas(windowWidth, windowHeight);
 
- function touchEnded() {
-   DeviceOrientationEvent.requestPermission();
- }
+  for (var i = 0; i < amountOfManyPapers; i++) {
+    allMyPapers = new Paper(random(0, windowWidth), random(0, windowHeight));
+    manyPapers.push(allMyPapers);
+  }
+
+}
+
+function draw() {
+  background('grey');
+  for (var i = 0; i < manyPapers.length; i++) {
+    var allMyPapers = manyPapers[i];
+
+    allMyPapers.move();
+    allMyPapers.show();
+  }
+
+  image(basket, map(rotationY, -180, 180, 1, width), windowHeight - basket.height/4, basket.width/4, basket.height/4);
+}
+
+function Paper(_x, _y) {
+  var paperWidth = 80;
+  var paperHeight = 80;
+
+  this.x = _x;
+  this.y = _y;
+  this.speed = 3;
+
+  var xIncrease = 0;
+  var yIncrease = 1;
+
+  this.move = function() {
+    this.x += xIncrease * this.speed;
+    this.y += yIncrease * this.speed;
+  }
+
+  this.show = function() {
+    image(paper, this.x, this.y, paperWidth, paperHeight);
+  }
+}
